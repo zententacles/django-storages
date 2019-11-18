@@ -4,7 +4,6 @@ import mimetypes
 from datetime import datetime, timedelta
 from tempfile import SpooledTemporaryFile
 
-from azure.common import AzureMissingResourceHttpError
 from azure.storage.blob import BlobPermissions, ContentSettings
 from azure.storage.blob.blockblobservice import BlockBlobService
 from django.core.exceptions import SuspiciousOperation
@@ -17,6 +16,12 @@ from django.utils.encoding import filepath_to_uri, force_bytes
 from storages.utils import (
     clean_name, get_available_overwrite_name, safe_join, setting,
 )
+
+try:
+    from azure.core.exceptions import ResourceNotFoundError
+except ImportError:
+    # < azure.storage.blob 12.0
+    from azure.common import AzureMissingResourceHttpError as ResourceNotFoundError
 
 
 @deconstructible
@@ -225,7 +230,7 @@ class AzureStorage(Storage):
                 container_name=self.azure_container,
                 blob_name=self._get_valid_path(name),
                 timeout=self.timeout)
-        except AzureMissingResourceHttpError:
+        except ResourceNotFoundError:
             pass
 
     def size(self, name):
