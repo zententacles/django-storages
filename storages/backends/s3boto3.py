@@ -455,7 +455,13 @@ class S3Boto3Storage(CompressStorageMixin, BaseStorage):
         obj = self.bucket.Object(name)
         #obj.upload_fileobj(content, ExtraArgs=params)
         #transfer_config = TransferConfig(multipart_chunksize=1 * 1024 * 1024)
-        transfer_config = TransferConfig(max_bandwidth=1 * 1024 * 1024)
+        transfer_config = TransferConfig(
+            multipart_threshold=256 * 1024,
+            max_concurrency=2,
+            multipart_chunksize=256 * 1024,
+            max_io_queue=10,
+            io_chunksize=256 * 1024
+        )
         obj.upload_fileobj(content, Config=transfer_config, ExtraArgs=params)
         return cleaned_name
 
