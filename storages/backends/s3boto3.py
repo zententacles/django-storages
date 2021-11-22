@@ -118,7 +118,7 @@ class S3Boto3StorageFile(CompressedFileMixin, File):
         # Amazon allows up to 10,000 parts.  The default supports uploads
         # up to roughly 50 GB.  Increase the part size to accommodate
         # for files larger than this.
-        self.buffer_size = buffer_size or setting('AWS_S3_FILE_BUFFER_SIZE', 1 * 1024 * 1 * 1024)
+        self.buffer_size = buffer_size or setting('AWS_S3_FILE_BUFFER_SIZE', 1 * 1024 * 1024)
         self._write_counter = 0
 
     @property
@@ -272,7 +272,7 @@ class S3Boto3Storage(CompressStorageMixin, BaseStorage):
                 s3={'addressing_style': self.addressing_style},
                 signature_version=self.signature_version,
                 proxies=self.proxies,
-                max_pool_connections=4,
+                max_pool_connections=2,
             )
 
     def get_cloudfront_signer(self, key_id, key):
