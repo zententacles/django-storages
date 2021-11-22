@@ -23,6 +23,7 @@ from storages.utils import (
 
 try:
     import boto3.session
+    from boto3.s3.transfer import TransferConfig
     from botocore.client import Config
     from botocore.exceptions import ClientError
     from botocore.signers import CloudFrontSigner
@@ -452,7 +453,9 @@ class S3Boto3Storage(CompressStorageMixin, BaseStorage):
             params['ContentEncoding'] = 'gzip'
 
         obj = self.bucket.Object(name)
-        obj.upload_fileobj(content, ExtraArgs=params)
+        #obj.upload_fileobj(content, ExtraArgs=params)
+        transfer_config = TransferConfig(multipart_chunksize=1 * 1024 * 1024)
+        obj.upload_fileobj(content, Config=transfer_config, ExtraArgs=params)
         return cleaned_name
 
     def delete(self, name):
