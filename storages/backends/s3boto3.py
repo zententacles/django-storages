@@ -4,7 +4,7 @@ import posixpath
 import tempfile
 import threading
 from datetime import datetime, timedelta
-from tempfile import SpooledTemporaryFile
+from tempfile import NamedTemporaryFile
 from urllib.parse import parse_qsl, urlencode, urlsplit
 
 from django.contrib.staticfiles.storage import ManifestFilesMixin
@@ -127,8 +127,8 @@ class S3Boto3StorageFile(CompressedFileMixin, File):
 
     def _get_file(self):
         if self._file is None:
-            self._file = SpooledTemporaryFile(
-                max_size=self._storage.max_memory_size,
+            self._file = NamedTemporaryFile(
+                #max_size=self._storage.max_memory_size,
                 suffix='.S3Boto3StorageFile',
                 dir=setting('FILE_UPLOAD_TEMP_DIR')
             )
@@ -272,7 +272,6 @@ class S3Boto3Storage(CompressStorageMixin, BaseStorage):
                 s3={'addressing_style': self.addressing_style},
                 signature_version=self.signature_version,
                 proxies=self.proxies,
-                max_pool_connections=2,
             )
 
     def get_cloudfront_signer(self, key_id, key):
@@ -619,6 +618,6 @@ class S3ManifestStaticStorage(ManifestFilesMixin, S3StaticStorage):
 
     def _save(self, name, content):
         content.seek(0)
-        with tempfile.SpooledTemporaryFile() as tmp:
+        with tempfile.NamedTemporaryFile() as tmp:
             tmp.write(content.read())
             return super()._save(name, tmp)
