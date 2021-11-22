@@ -453,7 +453,7 @@ class S3Boto3Storage(CompressStorageMixin, BaseStorage):
             params['ContentEncoding'] = 'gzip'
 
         obj = self.bucket.Object(name)
-        #obj.upload_fileobj(content, ExtraArgs=params)
+        obj.upload_fileobj(content, ExtraArgs=params)
         
         #transfer_config = TransferConfig(multipart_chunksize=1 * 1024 * 1024)
         #transfer_config = TransferConfig(
