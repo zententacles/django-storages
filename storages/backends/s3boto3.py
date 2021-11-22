@@ -453,9 +453,9 @@ class S3Boto3Storage(CompressStorageMixin, BaseStorage):
             params['ContentEncoding'] = 'gzip'
 
         obj = self.bucket.Object(name)
-        #obj.upload_fileobj(content, ExtraArgs=params)
-        transfer_config = TransferConfig(multipart_chunksize=1 * 1024 * 1024)
-        obj.upload_fileobj(content, Config=transfer_config, ExtraArgs=params)
+        obj.upload_fileobj(content, ExtraArgs=params)
+        #transfer_config = TransferConfig(multipart_chunksize=1 * 1024 * 1024)
+        #obj.upload_fileobj(content, Config=transfer_config, ExtraArgs=params)
         return cleaned_name
 
     def delete(self, name):
